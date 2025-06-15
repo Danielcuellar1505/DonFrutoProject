@@ -38,21 +38,21 @@ document.addEventListener('DOMContentLoaded', function() {
       cartItemsContainer.innerHTML = '<p>Tu carrito está vacío.</p>';
     } else {
       cart.forEach((item, index) => {
-        const price = safeNumber(item.price);
-        const quantity = safeNumber(item.quantity);
-        const totalPrice = price * quantity;
-        total += totalPrice;
+        const precio = safeNumber(item.precio);
+        const cantidad = safeNumber(item.cantidad);
+        const precioTotal = precio * cantidad;
+        total += precioTotal;
 
         const cartItem = document.createElement('div');
         cartItem.className = 'cart-item';
         cartItem.innerHTML = `
-          <img src="${item.image}" alt="${item.name}">
+          <img src="${item.imagen}" alt="${item.nombre}">
           <div class="cart-item-info">
-            <h3 class="cart-item-title">${item.name}</h3>
-            <p class="cart-item-price">Bs. ${price.toFixed(2)}</p>
+            <h3 class="cart-item-title">${item.nombre}</h3>
+            <p class="cart-item-price">Bs. ${precio.toFixed(2)}</p>
             <div class="cart-item-quantity">
               <button class="decrease-quantity" data-index="${index}">-</button>
-              <input type="number" value="${quantity}" min="1" data-index="${index}">
+              <input type="number" value="${cantidad}" min="1" data-index="${index}">
               <button class="increase-quantity" data-index="${index}">+</button>
             </div>
           </div>
@@ -78,17 +78,17 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       const q = query(
-        collection(db, `users/${user.uid}/orders`),
-        where('product.name', '==', productName),
-        where('isPaid', '==', false)
+        collection(db, `usuarios/${user.uid}/pedidos`),
+        where('producto.nombre', '==', productName),
+        where('pagado', '==', false)
       );
       const querySnapshot = await getDocs(q);
 
       for (const doc of querySnapshot.docs) {
-        const price = doc.data().product.price;
+        const precio = doc.data().producto.precio;
         await updateDoc(doc.ref, {
-          'product.quantity': newQuantity,
-          'product.totalPrice': price * newQuantity
+          'producto.cantidad': newQuantity,
+          'producto.precioTotal': precio * newQuantity
         });
       }
     } catch (error) {
@@ -110,9 +110,9 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       const q = query(
-        collection(db, `users/${user.uid}/orders`),
-        where('product.name', '==', productName),
-        where('isPaid', '==', false)
+        collection(db, `usuarios/${user.uid}/pedidos`),
+        where('producto.nombre', '==', productName),
+        where('pagado', '==', false)
       );
       const querySnapshot = await getDocs(q);
 
@@ -137,11 +137,11 @@ document.addEventListener('DOMContentLoaded', function() {
         throw new Error('Información de usuario no válida');
       }
 
-      const q = query(collection(db, `users/${user.uid}/orders`), where('isPaid', '==', false));
+      const q = query(collection(db, `usuarios/${user.uid}/pedidos`), where('pagado', '==', false));
       const querySnapshot = await getDocs(q);
       
       for (const doc of querySnapshot.docs) {
-        await updateDoc(doc.ref, { isPaid: true });
+        await updateDoc(doc.ref, { pagado: true });
       }
 
       alert('¡Pago confirmado! Tu pedido ha sido procesado.');
@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function updateCart() {
     cart.forEach(item => {
-      item.totalPrice = item.price * item.quantity;
+      item.precioTotal = item.precio * item.cantidad;
     });
     localStorage.setItem('cart', JSON.stringify(cart));
     renderCart();
@@ -181,18 +181,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const index = e.target.dataset.index;
     if (!index) return;
 
-    const productName = cart[index].name;
+    const productName = cart[index].nombre;
 
     if (e.target.classList.contains('increase-quantity')) {
-      cart[index].quantity = safeNumber(cart[index].quantity) + 1;
-      await updateQuantityInFirestore(productName, cart[index].quantity);
+      cart[index].cantidad = safeNumber(cart[index].cantidad) + 1;
+      await updateQuantityInFirestore(productName, cart[index].cantidad);
       updateCart();
     }
     else if (e.target.classList.contains('decrease-quantity')) {
-      const newQuantity = safeNumber(cart[index].quantity) - 1;
+      const newQuantity = safeNumber(cart[index].cantidad) - 1;
       if (newQuantity >= 1) {
-        cart[index].quantity = newQuantity;
-        await updateQuantityInFirestore(productName, cart[index].quantity);
+        cart[index].cantidad = newQuantity;
+        await updateQuantityInFirestore(productName, cart[index].cantidad);
         updateCart();
       }
     }
@@ -207,8 +207,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (e.target.type === 'number') {
       const index = e.target.dataset.index;
       const value = parseInt(e.target.value) || 1;
-      cart[index].quantity = Math.max(1, value);
-      await updateQuantityInFirestore(cart[index].name, cart[index].quantity);
+      cart[index].cantidad = Math.max(1, value);
+      await updateQuantityInFirestore(cart[index].nombre, cart[index].cantidad);
       updateCart();
     }
   });

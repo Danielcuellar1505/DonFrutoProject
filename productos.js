@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
   let cart = JSON.parse(localStorage.getItem('cart')) || [];
   
   function updateCartCount() {
-    const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+    const cartCount = cart.reduce((total, item) => total + item.cantidad, 0);
     const cartCountElement = document.querySelector('.cart-count');
     if (cartCountElement) {
       cartCountElement.textContent = cartCount;
@@ -55,12 +55,12 @@ document.addEventListener('DOMContentLoaded', function() {
       const quantity = 1;
       const totalPrice = priceValue * quantity;
 
-      const product = {
-        name: productName,
-        price: priceValue,
-        image: productImage,
-        quantity: quantity,
-        totalPrice: totalPrice
+      const producto = {
+        nombre: productName,
+        precio: priceValue,
+        imagen: productImage,
+        cantidad: quantity,
+        precioTotal: totalPrice
       };
 
       try {
@@ -78,21 +78,21 @@ document.addEventListener('DOMContentLoaded', function() {
           throw new Error('Información de usuario no válida o no coincide con el usuario autenticado');
         }
 
-        console.log('Guardando en Firestore en:', `users/${user.uid}/orders`);
-        await addDoc(collection(db, `users/${user.uid}/orders`), {
-          product: product,
-          identifier: userInfo.identifier,
-          isPaid: false,
-          createdAt: new Date()
+        console.log('Guardando en Firestore en:', `usuarios/${user.uid}/pedidos`);
+        await addDoc(collection(db, `usuarios/${user.uid}/pedidos`), {
+          producto: producto,
+          identificador: userInfo.identifier,
+          pagado: false,
+          fechaCreacion: new Date()
         });
         console.log('Producto guardado en Firestore');
         
-        const existingProduct = cart.find(item => item.name === product.name);
+        const existingProduct = cart.find(item => item.nombre === producto.nombre);
         if (existingProduct) {
-          existingProduct.quantity += 1;
-          existingProduct.totalPrice = existingProduct.price * existingProduct.quantity;
+          existingProduct.cantidad += 1;
+          existingProduct.precioTotal = existingProduct.precio * existingProduct.cantidad;
         } else {
-          cart.push(product);
+          cart.push(producto);
         }
         
         localStorage.setItem('cart', JSON.stringify(cart));
