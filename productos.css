@@ -24,7 +24,6 @@ header {
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-/* Navbar Styles (now matching misionvision.html) */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -104,7 +103,6 @@ header {
   transform-origin: bottom left;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;
@@ -318,7 +316,6 @@ footer {
   font-size: 1.2rem;
 }
 
-/* Floating Cart Button Styles */
 .floating-cart-btn {
   position: fixed;
   bottom: 30px;

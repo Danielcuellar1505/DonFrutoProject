@@ -19,7 +19,6 @@ body {
   line-height: 1.6;
 }
 
-/* Navbar Styles (IDÉNTICO al de productos.html) */
 header {
   background: linear-gradient(to right, #a8e6cf, #dcedc1);
   padding: 1rem;
@@ -105,7 +104,6 @@ header {
   transform-origin: bottom left;
 }
 
-/* Hero Section */
 .hero {
   background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('fondo-mision.jpg') no-repeat center center/cover;
   height: 20vh;
@@ -125,7 +123,6 @@ header {
   font-size: 1.2rem;
 }
 
-/* Mission-Vision Container */
 .mission-vision-container {
   max-width: 1200px;
   margin: 3rem auto;
@@ -213,7 +210,6 @@ header {
   margin-right: 0.5rem;
 }
 
-/* Footer */
 footer {
   background: var(--dark-color);
   color: var(--white);
@@ -253,13 +249,11 @@ footer {
   font-size: 1.2rem;
 }
 
-/* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;

@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-  // Efecto de aparición suave para las tarjetas
   const teamCards = document.querySelectorAll('.team-card');
   
   teamCards.forEach((card, index) => {
@@ -13,7 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 200 * index);
   });
 
-  // Animación para los iconos
   const memberIcons = document.querySelectorAll('.member-icon');
   
   memberIcons.forEach(icon => {

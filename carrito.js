@@ -222,7 +222,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Ocultar modal al cargar la página
     modal.classList.remove('show');
 
-    // Abrir modal al hacer clic en "Proceder al Pago"
     btnCheckout.addEventListener('click', function(e) {
       e.preventDefault();
       if (cart.length === 0) {
@@ -233,20 +232,17 @@ document.addEventListener('DOMContentLoaded', function() {
       modal.classList.add('show');
     });
 
-    // Confirmar pago desde el modal
     btnConfirmPayment.addEventListener('click', async function(e) {
       e.preventDefault();
       console.log('Confirmando pago');
       await confirmPayment();
     });
 
-    // Cerrar modal al hacer clic en la "X"
     closeModal.addEventListener('click', function() {
       console.log('Cerrando modal');
       modal.classList.remove('show');
     });
 
-    // Cerrar modal al hacer clic fuera del contenido
     window.addEventListener('click', function(e) {
       if (e.target === modal) {
         console.log('Cerrando modal por clic fuera');

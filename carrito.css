@@ -179,7 +179,6 @@ header {
   background: #388e3c;
 }
 
-/* Footer Styles */
 footer {
   background: var(--dark-color);
   color: var(--white);
@@ -219,7 +218,6 @@ footer {
   font-size: 1.2rem;
 }
 
-/* Modal Styles - Mejoras implementadas */
 .modal {
   display: none;
   position: fixed;
@@ -330,7 +328,6 @@ footer {
     text-align: center;
   }
 
-  /* Mejoras responsive para el modal */
   .modal-content {
     padding: 20px;
   }

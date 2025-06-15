@@ -37,14 +37,12 @@ const handleAuthError = (error) => {
   mensajeError.textContent = message;
 };
 
-// Generar identificador para usuario anónimo
 const generateGuestIdentifier = () => {
   const guestCount = parseInt(localStorage.getItem('guestCount') || '0') + 1;
   localStorage.setItem('guestCount', guestCount);
   return `Invitado_${guestCount}`;
 };
 
-// Guardar información del usuario en localStorage
 const saveUserInfo = (user, identifier) => {
   localStorage.setItem('userInfo', JSON.stringify({
     userId: user.uid,
@@ -52,7 +50,6 @@ const saveUserInfo = (user, identifier) => {
   }));
 };
 
-// Login
 if (document.getElementById("login-form")) {
   document.getElementById("login-form").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -70,7 +67,6 @@ if (document.getElementById("login-form")) {
     }
   });
 
-  // Login anónimo
   document.getElementById("guest-btn").addEventListener("click", async () => {
     mensajeError.textContent = "";
     try {
@@ -84,7 +80,6 @@ if (document.getElementById("login-form")) {
   });
 }
 
-// Registro
 if (document.getElementById("register-form")) {
   document.getElementById("register-form").addEventListener("submit", async (e) => {
     e.preventDefault();
