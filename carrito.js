@@ -69,13 +69,16 @@ document.addEventListener('DOMContentLoaded', function() {
     try {
       const user = auth.currentUser;
       if (!user) {
-        await signInAnonymously(auth);
+        throw new Error('Usuario no autenticado');
       }
-      const userId = auth.currentUser.uid;
+
+      const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+      if (!userInfo || userInfo.userId !== user.uid) {
+        throw new Error('Información de usuario no válida');
+      }
 
       const q = query(
-        collection(db, 'orders'),
-        where('userId', '==', userId),
+        collection(db, `users/${user.uid}/orders`),
         where('product.name', '==', productName),
         where('isPaid', '==', false)
       );
@@ -94,13 +97,16 @@ document.addEventListener('DOMContentLoaded', function() {
     try {
       const user = auth.currentUser;
       if (!user) {
-        await signInAnonymously(auth);
+        throw new Error('Usuario no autenticado');
       }
-      const userId = auth.currentUser.uid;
+
+      const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+      if (!userInfo || userInfo.userId !== user.uid) {
+        throw new Error('Información de usuario no válida');
+      }
 
       const q = query(
-        collection(db, 'orders'),
-        where('userId', '==', userId),
+        collection(db, `users/${user.uid}/orders`),
         where('product.name', '==', productName),
         where('isPaid', '==', false)
       );
@@ -119,11 +125,15 @@ document.addEventListener('DOMContentLoaded', function() {
     try {
       const user = auth.currentUser;
       if (!user) {
-        await signInAnonymously(auth);
+        throw new Error('Usuario no autenticado');
       }
-      const userId = auth.currentUser.uid;
 
-      const q = query(collection(db, 'orders'), where('userId', '==', userId), where('isPaid', '==', false));
+      const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+      if (!userInfo || userInfo.userId !== user.uid) {
+        throw new Error('Información de usuario no válida');
+      }
+
+      const q = query(collection(db, `users/${user.uid}/orders`), where('isPaid', '==', false));
       const querySnapshot = await getDocs(q);
       
       for (const doc of querySnapshot.docs) {

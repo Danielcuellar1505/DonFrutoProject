@@ -25,8 +25,6 @@ const mensajeError = document.getElementById("mensaje-error");
 
 const handleAuthError = (error) => {
   let message = error.message;
-  
-  // Traducción de mensajes comunes de error
   if (error.code === 'auth/wrong-password') {
     message = 'Contraseña incorrecta';
   } else if (error.code === 'auth/user-not-found') {
@@ -36,8 +34,22 @@ const handleAuthError = (error) => {
   } else if (error.code === 'auth/weak-password') {
     message = 'La contraseña debe tener al menos 6 caracteres';
   }
-  
   mensajeError.textContent = message;
+};
+
+// Generar identificador para usuario anónimo
+const generateGuestIdentifier = () => {
+  const guestCount = parseInt(localStorage.getItem('guestCount') || '0') + 1;
+  localStorage.setItem('guestCount', guestCount);
+  return `Invitado_${guestCount}`;
+};
+
+// Guardar información del usuario en localStorage
+const saveUserInfo = (user, identifier) => {
+  localStorage.setItem('userInfo', JSON.stringify({
+    userId: user.uid,
+    identifier: identifier
+  }));
 };
 
 // Login
@@ -50,7 +62,8 @@ if (document.getElementById("login-form")) {
     const password = document.getElementById("password").value.trim();
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      saveUserInfo(userCredential.user, email);
       window.location.href = "productos.html";
     } catch (error) {
       handleAuthError(error);
@@ -61,7 +74,9 @@ if (document.getElementById("login-form")) {
   document.getElementById("guest-btn").addEventListener("click", async () => {
     mensajeError.textContent = "";
     try {
-      await signInAnonymously(auth);
+      const userCredential = await signInAnonymously(auth);
+      const guestIdentifier = generateGuestIdentifier();
+      saveUserInfo(userCredential.user, guestIdentifier);
       window.location.href = "productos.html";
     } catch (error) {
       handleAuthError(error);
@@ -85,7 +100,8 @@ if (document.getElementById("register-form")) {
     }
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      saveUserInfo(userCredential.user, email);
       window.location.href = "login.html";
     } catch (error) {
       handleAuthError(error);

@@ -60,12 +60,17 @@ document.addEventListener('DOMContentLoaded', function() {
       try {
         const user = auth.currentUser;
         if (!user) {
-          await signInAnonymously(auth);
+          throw new Error('Usuario no autenticado');
         }
-        
-        await addDoc(collection(db, 'orders'), {
-          userId: auth.currentUser.uid,
+
+        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        if (!userInfo || userInfo.userId !== user.uid) {
+          throw new Error('Información de usuario no válida');
+        }
+
+        await addDoc(collection(db, `users/${user.uid}/orders`), {
           product: product,
+          identifier: userInfo.identifier,
           isPaid: false,
           createdAt: new Date()
         });
