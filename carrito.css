@@ -123,6 +123,7 @@ header {
 
 .cart-item {
   display: flex;
+  flex-direction: row;
   align-items: center;
   background: var(--white);
   border-radius: 10px;
@@ -139,6 +140,9 @@ header {
 
 .cart-item-info {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .cart-item-title {
@@ -200,6 +204,7 @@ header {
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  margin-top: 1rem;
 }
 
 .cart-summary {
@@ -369,6 +374,34 @@ footer {
   background-color: #218838;
 }
 
+@media (min-width: 769px) {
+  .cart-item {
+    flex-direction: column; 
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .cart-item img {
+    margin-bottom: 1rem; 
+  }
+
+  .cart-item-info {
+    width: 100%; 
+    margin-bottom: 0; 
+  }
+
+  .cart-item-actions {
+    width: 100%;
+    justify-content: space-between; 
+    margin-top: 0.5rem; 
+    gap: 1rem; 
+  }
+
+  .cart-item-remove {
+    margin-left: auto; 
+  }
+}
+
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;
@@ -388,7 +421,7 @@ footer {
 
   .cart-item {
     flex-direction: column;
-    align-items: center; /* Centra los elementos horizontalmente */
+    align-items: center;
     text-align: center;
     padding: 1rem;
   }
@@ -400,34 +433,34 @@ footer {
   .cart-item-info {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centra el contenido (nombre y precio) */
+    align-items: center; 
     width: 100%;
     margin-bottom: 1rem;
   }
 
   .cart-item-title {
-    text-align: center; /* Centra el nombre */
+    text-align: center;
   }
 
   .cart-item-price {
-    text-align: center; /* Centra el precio */
+    text-align: center; 
   }
 
   .cart-item-actions {
     display: flex;
-    justify-content: space-between; /* Coloca quantity a la izquierda y remove a la derecha */
-    align-items: center; /* Alinea verticalmente en el centro */
+    justify-content: space-between;
+    align-items: center; 
     width: 100%;
-    gap: 0.5rem; /* Espacio entre los elementos */
+    gap: 0.5rem; 
   }
 
   .cart-item-quantity {
-    justify-content: flex-start; /* Alinea los botones de cantidad a la izquierda */
+    justify-content: flex-start; 
   }
 
   .cart-item-remove {
-    width: auto; /* Asegura que no ocupe todo el ancho */
-    flex-shrink: 0; /* Evita que el botón se reduzca */
+    width: auto; 
+    flex-shrink: 0; 
   }
 
   .cart-summary {
