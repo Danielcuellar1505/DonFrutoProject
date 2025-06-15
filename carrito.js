@@ -50,13 +50,15 @@ document.addEventListener('DOMContentLoaded', function() {
           <div class="cart-item-info">
             <h3 class="cart-item-title">${item.nombre}</h3>
             <p class="cart-item-price">Bs. ${precio.toFixed(2)}</p>
+          </div>
+          <div class="cart-item-actions">
             <div class="cart-item-quantity">
               <button class="decrease-quantity" data-index="${index}">-</button>
               <input type="number" value="${cantidad}" min="1" data-index="${index}">
               <button class="increase-quantity" data-index="${index}">+</button>
             </div>
+            <button class="cart-item-remove" data-index="${index}">Eliminar</button>
           </div>
-          <button class="cart-item-remove" data-index="${index}">Eliminar</button>
         `;
         cartItemsContainer.appendChild(cartItem);
       });

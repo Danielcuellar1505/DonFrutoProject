@@ -195,6 +195,13 @@ header {
   background: #cc0000;
 }
 
+.cart-item-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
 .cart-summary {
   margin-top: 2rem;
   text-align: right;
@@ -381,12 +388,46 @@ footer {
 
   .cart-item {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center; /* Centra los elementos horizontalmente */
     text-align: center;
+    padding: 1rem;
   }
 
   .cart-item img {
     margin: 0 auto 1rem;
+  }
+
+  .cart-item-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra el contenido (nombre y precio) */
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .cart-item-title {
+    text-align: center; /* Centra el nombre */
+  }
+
+  .cart-item-price {
+    text-align: center; /* Centra el precio */
+  }
+
+  .cart-item-actions {
+    display: flex;
+    justify-content: space-between; /* Coloca quantity a la izquierda y remove a la derecha */
+    align-items: center; /* Alinea verticalmente en el centro */
+    width: 100%;
+    gap: 0.5rem; /* Espacio entre los elementos */
+  }
+
+  .cart-item-quantity {
+    justify-content: flex-start; /* Alinea los botones de cantidad a la izquierda */
+  }
+
+  .cart-item-remove {
+    width: auto; /* Asegura que no ocupe todo el ancho */
+    flex-shrink: 0; /* Evita que el botón se reduzca */
   }
 
   .cart-summary {
