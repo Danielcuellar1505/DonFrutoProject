@@ -28,9 +28,11 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   onAuthStateChanged(auth, (user) => {
+    console.log('Estado de autenticación:', user ? { uid: user.uid, email: user.email } : 'No autenticado');
     if (!user) {
+      console.log('Intentando login anónimo');
       signInAnonymously(auth).catch(error => {
-        console.error('Error en login anónimo:', error);
+        console.error('Error en login anónimo:', error.code, error.message);
         alert('Error de autenticación. Intenta de nuevo.');
       });
     }
@@ -46,38 +48,49 @@ document.addEventListener('DOMContentLoaded', function() {
       const productPriceText = productCard.querySelector('.product-price').textContent;
       const productImage = productCard.querySelector('.product-image img').src;
       
+      console.log('Producto a añadir:', { productName, productPriceText, productImage });
+      
       const priceMatch = productPriceText.match(/Bs\.\s*(\d+)/);
       const priceValue = priceMatch ? parseInt(priceMatch[1]) : 0;
+      const quantity = 1;
+      const totalPrice = priceValue * quantity;
 
       const product = {
         name: productName,
         price: priceValue,
-        priceText: `Bs. ${priceValue}.00`,
         image: productImage,
-        quantity: 1
+        quantity: quantity,
+        totalPrice: totalPrice
       };
 
       try {
         const user = auth.currentUser;
+        console.log('Usuario actual:', user ? { uid: user.uid, email: user.email } : 'No autenticado');
         if (!user) {
-          throw new Error('Usuario no autenticado');
+          console.log('Intentando login anónimo dentro de addToCart');
+          await signInAnonymously(auth);
+          console.log('Login anónimo exitoso:', auth.currentUser.uid);
         }
 
         const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        console.log('userInfo:', userInfo);
         if (!userInfo || userInfo.userId !== user.uid) {
-          throw new Error('Información de usuario no válida');
+          throw new Error('Información de usuario no válida o no coincide con el usuario autenticado');
         }
 
+        console.log('Guardando en Firestore en:', `users/${user.uid}/orders`);
         await addDoc(collection(db, `users/${user.uid}/orders`), {
           product: product,
           identifier: userInfo.identifier,
           isPaid: false,
           createdAt: new Date()
         });
+        console.log('Producto guardado en Firestore');
         
         const existingProduct = cart.find(item => item.name === product.name);
         if (existingProduct) {
           existingProduct.quantity += 1;
+          existingProduct.totalPrice = existingProduct.price * existingProduct.quantity;
         } else {
           cart.push(product);
         }
@@ -86,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
         showNotification(`${productName} añadido al carrito`);
         updateCartCount();
       } catch (error) {
-        console.error('Error al guardar en Firestore:', error);
+        console.error('Error al guardar en Firestore:', error.code, error.message);
         alert('Error al añadir el producto. Intenta de nuevo.');
       }
     });

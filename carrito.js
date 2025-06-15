@@ -40,8 +40,8 @@ document.addEventListener('DOMContentLoaded', function() {
       cart.forEach((item, index) => {
         const price = safeNumber(item.price);
         const quantity = safeNumber(item.quantity);
-        const subtotal = price * quantity;
-        total += subtotal;
+        const totalPrice = price * quantity;
+        total += totalPrice;
 
         const cartItem = document.createElement('div');
         cartItem.className = 'cart-item';
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
           <img src="${item.image}" alt="${item.name}">
           <div class="cart-item-info">
             <h3 class="cart-item-title">${item.name}</h3>
-            <p class="cart-item-price">Bs. ${price.toFixed(2)}</p>
+            <p class="cart-item-price">Bs. ${price.toFixed(2)} x ${quantity} = Bs. ${totalPrice.toFixed(2)}</p>
             <div class="cart-item-quantity">
               <button class="decrease-quantity" data-index="${index}">-</button>
               <input type="number" value="${quantity}" min="1" data-index="${index}">
@@ -85,7 +85,11 @@ document.addEventListener('DOMContentLoaded', function() {
       const querySnapshot = await getDocs(q);
 
       for (const doc of querySnapshot.docs) {
-        await updateDoc(doc.ref, { 'product.quantity': newQuantity });
+        const price = doc.data().product.price;
+        await updateDoc(doc.ref, {
+          'product.quantity': newQuantity,
+          'product.totalPrice': price * newQuantity
+        });
       }
     } catch (error) {
       console.error('Error al actualizar cantidad en Firestore:', error);
@@ -156,6 +160,9 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function updateCart() {
+    cart.forEach(item => {
+      item.totalPrice = item.price * item.quantity;
+    });
     localStorage.setItem('cart', JSON.stringify(cart));
     renderCart();
   }
