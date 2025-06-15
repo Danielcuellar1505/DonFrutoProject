@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function() {
   style.textContent = `
     .notification {
       position: fixed;
-      bottom: 20px;
+      top: 20px;
       right: 20px;
       background-color: var(--secondary-color);
       color: white;
@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  const currentPage = window.location.pathname.split('/').pop() || 'productos.html';
+  const currentPage = window.location.pathname.split('/').pub() || 'productos.html';
   const navLinks = document.querySelectorAll('.nav-links a');
   
   navLinks.forEach(link => {
