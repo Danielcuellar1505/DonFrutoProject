@@ -1,3 +1,21 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBIQXiPe8DhUeAIAr2Zt14nbLnw20U94No",
+  authDomain: "don-fruto.firebaseapp.com",
+  projectId: "don-fruto",
+  storageBucket: "don-fruto.firebasestorage.app",
+  messagingSenderId: "235335012940",
+  appId: "1:235335012940:web:82209aa355684c08409ae9",
+  measurementId: "G-Z70J0PWZY3",
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
 document.addEventListener('DOMContentLoaded', function() {
   let cart = JSON.parse(localStorage.getItem('cart')) || [];
   
@@ -9,49 +27,65 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      signInAnonymously(auth).catch(error => {
+        console.error('Error en login anónimo:', error);
+        alert('Error de autenticación. Intenta de nuevo.');
+      });
+    }
+  });
+
   const addToCartButtons = document.querySelectorAll('.btn-add-to-cart');
   
   addToCartButtons.forEach(button => {
-  button.addEventListener('click', function(e) {
-    e.preventDefault();
-    const productCard = this.closest('.product-card');
-    const productName = productCard.querySelector('.product-title').textContent;
-    const productPriceText = productCard.querySelector('.product-price').textContent;
-    const productImage = productCard.querySelector('.product-image img').src;
-    
-    // Extracción mejorada del precio (maneja "Bs. 18 / 1L")
-    const priceMatch = productPriceText.match(/Bs\.\s*(\d+)/);
-    const priceValue = priceMatch ? parseInt(priceMatch[1]) : 0;
-    
-    console.log('Producto añadido:', {
-      nombre: productName,
-      precioTexto: productPriceText,
-      precioNumerico: priceValue,
-      tipoDato: typeof priceValue
-    });
+    button.addEventListener('click', async function(e) {
+      e.preventDefault();
+      const productCard = this.closest('.product-card');
+      const productName = productCard.querySelector('.product-title').textContent;
+      const productPriceText = productCard.querySelector('.product-price').textContent;
+      const productImage = productCard.querySelector('.product-image img').src;
+      
+      const priceMatch = productPriceText.match(/Bs\.\s*(\d+)/);
+      const priceValue = priceMatch ? parseInt(priceMatch[1]) : 0;
 
-    const product = {
-      name: productName,
-      price: priceValue, // Guardamos como número
-      priceText: `Bs. ${priceValue}.00`, // Texto formateado
-      image: productImage,
-      quantity: 1 // Siempre empezamos con cantidad 1
-    };
-    
-    const existingProduct = cart.find(item => item.name === product.name);
-    
-    if (existingProduct) {
-      existingProduct.quantity += 1;
-    } else {
-      cart.push(product);
-    }
-    
-    localStorage.setItem('cart', JSON.stringify(cart));
-    console.log('Carrito actual:', JSON.parse(localStorage.getItem('cart')));
-    showNotification(`${productName} añadido al carrito`);
-    updateCartCount();
+      const product = {
+        name: productName,
+        price: priceValue,
+        priceText: `Bs. ${priceValue}.00`,
+        image: productImage,
+        quantity: 1
+      };
+
+      try {
+        const user = auth.currentUser;
+        if (!user) {
+          await signInAnonymously(auth);
+        }
+        
+        await addDoc(collection(db, 'orders'), {
+          userId: auth.currentUser.uid,
+          product: product,
+          isPaid: false,
+          createdAt: new Date()
+        });
+        
+        const existingProduct = cart.find(item => item.name === product.name);
+        if (existingProduct) {
+          existingProduct.quantity += 1;
+        } else {
+          cart.push(product);
+        }
+        
+        localStorage.setItem('cart', JSON.stringify(cart));
+        showNotification(`${productName} añadido al carrito`);
+        updateCartCount();
+      } catch (error) {
+        console.error('Error al guardar en Firestore:', error);
+        alert('Error al añadir el producto. Intenta de nuevo.');
+      }
+    });
   });
-});
 
   function showNotification(message) {
     const notification = document.createElement('div');
@@ -68,7 +102,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 2000);
   }
 
-  // Estilos para notificación
   const style = document.createElement('style');
   style.textContent = `
     .notification {
@@ -87,7 +120,6 @@ document.addEventListener('DOMContentLoaded', function() {
   `;
   document.head.appendChild(style);
 
-  // Animaciones para las tarjetas
   const productCards = document.querySelectorAll('.product-card');
   
   productCards.forEach((card, index) => {
@@ -101,7 +133,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 150 * index);
   });
 
-  // Efecto hover para las tarjetas
   productCards.forEach(card => {
     card.addEventListener('mouseenter', () => {
       card.style.transform = 'translateY(-10px)';
@@ -114,7 +145,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Efectos para botones
   const buttons = document.querySelectorAll('.btn');
   
   buttons.forEach(button => {
@@ -129,7 +159,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Resaltar enlace activo
   const currentPage = window.location.pathname.split('/').pop() || 'productos.html';
   const navLinks = document.querySelectorAll('.nav-links a');
   
@@ -139,6 +168,5 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // Inicializar contador del carrito
   updateCartCount();
 });
