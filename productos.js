@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
       };
 
       try {
-        showSpinner(); // Mostrar el spinner antes de la operación
+        showSpinner(); 
         const user = auth.currentUser;
         console.log('Usuario actual:', user ? { uid: user.uid, email: user.email } : 'No autenticado');
         if (!user) {
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('Error al guardar en Firestore:', error.code, error.message);
         alert('Error al añadir el producto. Intenta de nuevo.');
       } finally {
-        hideSpinner(); // Ocultar el spinner después de la operación (éxito o error)
+        hideSpinner(); 
       }
     });
   });
@@ -138,49 +138,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }, 300);
     }, 2000);
   }
-
-  const style = document.createElement('style');
-  style.textContent = `
-    .notification {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background-color: var(--secondary-color);
-      color: white;
-      padding: 15px 25px;
-      border-radius: 5px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-      opacity: 0;
-      transition: opacity 0.3s;
-      z-index: 1000;
-    }
-    .spinner {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 2000;
-    }
-    .spinner-circle {
-      width: 50px;
-      height: 50px;
-      border: 5px solid #f3f3f3;
-      border-top: 5px solid var(--primary-color);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  `;
-  document.head.appendChild(style);
-
   const productCards = document.querySelectorAll('.product-card');
   
   productCards.forEach((card, index) => {

@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   async function updateQuantityInFirestore(productName, newQuantity) {
     try {
-      showSpinner(); // Mostrar spinner antes de la operación
+      showSpinner();
       const user = auth.currentUser;
       if (!user) {
         throw new Error('Usuario no autenticado');
@@ -114,13 +114,13 @@ document.addEventListener('DOMContentLoaded', function() {
       console.error('Error al actualizar cantidad en Firestore:', error);
       alert('Error al actualizar la cantidad. Intenta de nuevo.');
     } finally {
-      hideSpinner(); // Ocultar spinner después de la operación
+      hideSpinner();
     }
   }
 
   async function deleteFromFirestore(productName) {
     try {
-      showSpinner(); // Mostrar spinner antes de la operación
+      showSpinner(); 
       const user = auth.currentUser;
       if (!user) {
         throw new Error('Usuario no autenticado');
@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
       console.error('Error al eliminar de Firestore:', error);
       alert('Error al eliminar el producto. Intenta de nuevo.');
     } finally {
-      hideSpinner(); // Ocultar spinner después de la operación
+      hideSpinner();
     }
   }
 
@@ -243,7 +243,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const btnConfirmPayment = document.querySelector('.btn-confirm-payment');
 
   if (modal && btnCheckout && closeModal && btnConfirmPayment) {
-    // Ocultar modal al cargar la página
     modal.classList.remove('show');
 
     btnCheckout.addEventListener('click', function(e) {
@@ -281,35 +280,6 @@ document.addEventListener('DOMContentLoaded', function() {
       btnConfirmPayment: !!btnConfirmPayment
     });
   }
-
-  const style = document.createElement('style');
-  style.textContent = `
-    .spinner {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 2000;
-    }
-    .spinner-circle {
-      width: 50px;
-      height: 50px;
-      border: 5px solid #f3f3f3;
-      border-top: 5px solid var(--primary-color);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  `;
-  document.head.appendChild(style);
 
   const currentPage = window.location.pathname.split('/').pop() || 'carrito.html';
   const navLinks = document.querySelectorAll('.nav-links a');
