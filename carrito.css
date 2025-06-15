@@ -505,3 +505,19 @@ footer {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+.notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: var(--secondary-color);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 5px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 1000;
+    }
+    .notification.error {
+      background-color: #ff4444;
+    }

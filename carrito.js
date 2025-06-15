@@ -46,6 +46,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
+  function showNotification(message, isError = false) {
+    const notification = document.createElement('div');
+    notification.className = `notification ${isError ? 'error' : ''}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    notification.style.opacity = '1';
+    setTimeout(() => {
+      notification.style.opacity = '0';
+      setTimeout(() => {
+        notification.remove();
+      }, 300);
+    }, 2000);
+  }
+
   function renderCart() {
     let total = 0;
     cartItemsContainer.innerHTML = '';
@@ -112,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     } catch (error) {
       console.error('Error al actualizar cantidad en Firestore:', error);
-      alert('Error al actualizar la cantidad. Intenta de nuevo.');
+      showNotification('Error al actualizar la cantidad. Intenta de nuevo.', true);
     } finally {
       hideSpinner();
     }
@@ -120,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   async function deleteFromFirestore(productName) {
     try {
-      showSpinner(); 
+      showSpinner();
       const user = auth.currentUser;
       if (!user) {
         throw new Error('Usuario no autenticado');
@@ -143,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     } catch (error) {
       console.error('Error al eliminar de Firestore:', error);
-      alert('Error al eliminar el producto. Intenta de nuevo.');
+      showNotification('Error al eliminar el producto. Intenta de nuevo.', true);
     } finally {
       hideSpinner();
     }
@@ -151,6 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   async function confirmPayment() {
     try {
+      showSpinner();
       const user = auth.currentUser;
       if (!user) {
         throw new Error('Usuario no autenticado');
@@ -168,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
         await updateDoc(doc.ref, { pagado: true });
       }
 
-      alert('¡Pago confirmado! Tu pedido ha sido procesado.');
+      showNotification('¡Pago confirmado! Tu pedido ha sido procesado.');
       cart = [];
       localStorage.setItem('cart', JSON.stringify(cart));
       updateCart();
@@ -179,7 +195,9 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     } catch (error) {
       console.error('Error al confirmar el pago:', error);
-      alert('Error al confirmar el pago. Intenta de nuevo.');
+      showNotification('Error al confirmar el pago. Intenta de nuevo.', true);
+    } finally {
+      hideSpinner();
     }
   }
 
@@ -195,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!user) {
       signInAnonymously(auth).catch(error => {
         console.error('Error en login anónimo:', error);
-        alert('Error de autenticación. Intenta de nuevo.');
+        showNotification('Error de autenticación. Intenta de nuevo.', true);
       });
     }
     renderCart();
@@ -248,7 +266,7 @@ document.addEventListener('DOMContentLoaded', function() {
     btnCheckout.addEventListener('click', function(e) {
       e.preventDefault();
       if (cart.length === 0) {
-        alert('El carrito está vacío.');
+        showNotification('El carrito está vacío.', true);
         return;
       }
       console.log('Abriendo modal de pago');
