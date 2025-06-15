@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
           <img src="${item.image}" alt="${item.name}">
           <div class="cart-item-info">
             <h3 class="cart-item-title">${item.name}</h3>
-            <p class="cart-item-price">Bs. ${price.toFixed(2)} x ${quantity} = Bs. ${totalPrice.toFixed(2)}</p>
+            <p class="cart-item-price">Bs. ${price.toFixed(2)}</p>
             <div class="cart-item-quantity">
               <button class="decrease-quantity" data-index="${index}">-</button>
               <input type="number" value="${quantity}" min="1" data-index="${index}">
