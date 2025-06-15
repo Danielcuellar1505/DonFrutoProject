@@ -38,6 +38,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
+  function showSpinner() {
+    const spinner = document.createElement('div');
+    spinner.className = 'spinner';
+    spinner.innerHTML = `
+      <div class="spinner-circle"></div>
+    `;
+    document.body.appendChild(spinner);
+  }
+
+  function hideSpinner() {
+    const spinner = document.querySelector('.spinner');
+    if (spinner) {
+      spinner.remove();
+    }
+  }
+
   const addToCartButtons = document.querySelectorAll('.btn-add-to-cart');
   
   addToCartButtons.forEach(button => {
@@ -64,6 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
       };
 
       try {
+        showSpinner(); // Mostrar el spinner antes de la operación
         const user = auth.currentUser;
         console.log('Usuario actual:', user ? { uid: user.uid, email: user.email } : 'No autenticado');
         if (!user) {
@@ -101,6 +118,8 @@ document.addEventListener('DOMContentLoaded', function() {
       } catch (error) {
         console.error('Error al guardar en Firestore:', error.code, error.message);
         alert('Error al añadir el producto. Intenta de nuevo.');
+      } finally {
+        hideSpinner(); // Ocultar el spinner después de la operación (éxito o error)
       }
     });
   });
@@ -134,6 +153,30 @@ document.addEventListener('DOMContentLoaded', function() {
       opacity: 0;
       transition: opacity 0.3s;
       z-index: 1000;
+    }
+    .spinner {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+    .spinner-circle {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   `;
   document.head.appendChild(style);
@@ -177,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  const currentPage = window.location.pathname.split('/').pub() || 'productos.html';
+  const currentPage = window.location.pathname.split('/').pop() || 'productos.html';
   const navLinks = document.querySelectorAll('.nav-links a');
   
   navLinks.forEach(link => {
