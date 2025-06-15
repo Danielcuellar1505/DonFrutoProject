@@ -97,7 +97,7 @@ if (document.getElementById("register-form")) {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       saveUserInfo(userCredential.user, email);
-      window.location.href = "login.html";
+      window.location.href = "index.html";
     } catch (error) {
       handleAuthError(error);
     }
