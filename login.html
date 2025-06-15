@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login - Don Fruto</title>
+  <link rel="stylesheet" href="login.css" />
+</head>
+<body>
+  <div class="login-container">
+    <div class="logo-container">
+      <img src="donfrutoicon.png" alt="Don Fruto" class="logo" />
+    </div>
+    <h1>Don Fruto</h1>
+    <h2>Iniciar Sesión</h2>
+
+    <form id="login-form">
+      <input type="email" id="email" placeholder="Correo electrónico" required />
+      <input type="password" id="password" placeholder="Contraseña" required />
+
+      <button type="submit">Iniciar Sesión</button>
+    </form>
+
+    <button type="button" id="guest-btn">
+      <img src="incognito.png" alt="Invitado" class="icono-btn" />
+      Ingresar como Invitado
+    </button>
+
+    <p>¿No tienes cuenta? <a href="register.html">Regístrate aquí</a></p>
+
+    <p id="mensaje-error"></p>
+  </div>
+
+  <script type="module" src="login.js"></script>
+</body>
+</html>
