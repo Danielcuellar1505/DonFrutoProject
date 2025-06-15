@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+import { getFirestore, collection, query, where, getDocs, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBIQXiPe8DhUeAIAr2Zt14nbLnw20U94No",
@@ -65,9 +65,54 @@ document.addEventListener('DOMContentLoaded', function() {
     cartTotalElement.textContent = `Bs. ${total.toFixed(2)}`;
   }
 
-  function updateCart() {
-    localStorage.setItem('cart', JSON.stringify(cart));
-    renderCart();
+  async function updateQuantityInFirestore(productName, newQuantity) {
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        await signInAnonymously(auth);
+      }
+      const userId = auth.currentUser.uid;
+
+      const q = query(
+        collection(db, 'orders'),
+        where('userId', '==', userId),
+        where('product.name', '==', productName),
+        where('isPaid', '==', false)
+      );
+      const querySnapshot = await getDocs(q);
+
+      for (const doc of querySnapshot.docs) {
+        await updateDoc(doc.ref, { 'product.quantity': newQuantity });
+      }
+    } catch (error) {
+      console.error('Error al actualizar cantidad en Firestore:', error);
+      alert('Error al actualizar la cantidad. Intenta de nuevo.');
+    }
+  }
+
+  async function deleteFromFirestore(productName) {
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        await signInAnonymously(auth);
+      }
+      const userId = auth.currentUser.uid;
+
+      const q = query(
+        collection(db, 'orders'),
+        where('userId', '==', userId),
+        where('product.name', '==', productName),
+        where('isPaid', '==', false)
+      );
+      const querySnapshot = await getDocs(q);
+
+      for (const doc of querySnapshot.docs) {
+        await deleteDoc(doc.ref);
+      }
+    } catch (error) {
+      console.error('Error al eliminar de Firestore:', error);
+      alert('Error al eliminar el producto. Intenta de nuevo.');
+    }
   }
 
   async function confirmPayment() {
@@ -100,6 +145,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
+  function updateCart() {
+    localStorage.setItem('cart', JSON.stringify(cart));
+    renderCart();
+  }
+
   onAuthStateChanged(auth, (user) => {
     if (!user) {
       signInAnonymously(auth).catch(error => {
@@ -110,32 +160,38 @@ document.addEventListener('DOMContentLoaded', function() {
     renderCart();
   });
 
-  cartItemsContainer.addEventListener('click', function(e) {
+  cartItemsContainer.addEventListener('click', async function(e) {
     const index = e.target.dataset.index;
     if (!index) return;
 
+    const productName = cart[index].name;
+
     if (e.target.classList.contains('increase-quantity')) {
       cart[index].quantity = safeNumber(cart[index].quantity) + 1;
+      await updateQuantityInFirestore(productName, cart[index].quantity);
       updateCart();
     }
     else if (e.target.classList.contains('decrease-quantity')) {
       const newQuantity = safeNumber(cart[index].quantity) - 1;
       if (newQuantity >= 1) {
         cart[index].quantity = newQuantity;
+        await updateQuantityInFirestore(productName, cart[index].quantity);
         updateCart();
       }
     }
     else if (e.target.classList.contains('cart-item-remove')) {
+      await deleteFromFirestore(productName);
       cart.splice(index, 1);
       updateCart();
     }
   });
 
-  cartItemsContainer.addEventListener('change', function(e) {
+  cartItemsContainer.addEventListener('change', async function(e) {
     if (e.target.type === 'number') {
       const index = e.target.dataset.index;
       const value = parseInt(e.target.value) || 1;
       cart[index].quantity = Math.max(1, value);
+      await updateQuantityInFirestore(cart[index].name, cart[index].quantity);
       updateCart();
     }
   });
